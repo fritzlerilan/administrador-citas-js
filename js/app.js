@@ -9,10 +9,10 @@ const formulario = document.querySelector('#nueva-cita');
 const contenedorCitas = document.querySelector('#citas');
 
 class Citas {
-    constructor(){
+    constructor() {
         this.citas = [];
     }
-    agregarCita(cita){
+    agregarCita(cita) {
         this.citas = [...this.citas, cita];
         console.log(this.citas);
     }
@@ -24,17 +24,72 @@ class UI {
         divMensaje.classList.add('text-center', 'alert', 'd-block', 'col-12');
         divMensaje.textContent = mensaje;
 
-        if(tipo === 'error'){
+        if (tipo === 'error') {
             divMensaje.classList.add('alert-danger');
         } else {
             divMensaje.classList.add('alert-success');
         }
-        
+
         document.querySelector('#contenido').insertBefore(divMensaje, document.querySelector('.agregar-cita'));
-        
+
         setTimeout(() => {
             divMensaje.remove();
         }, 4000)
+    }
+    imprimirCitas({citas}) { // Destructuring de objetos desde parametros
+        this.limpiarHTML();
+
+        citas.forEach(cita => {
+            const { mascota, propietario, telefono, fecha, hora, sintomas, id } = cita;
+            
+            const divCita = document.createElement('div');
+            divCita.classList.add('cita', 'p-3');
+            divCita.dataset.id = id;
+
+            const mascotaParrafo = document.createElement('h2');
+            mascotaParrafo.classList.add('card-title', 'font-weight-bolder');
+            mascotaParrafo.textContent = mascota;
+
+            const propietarioParrafo = document.createElement('p');
+            propietarioParrafo.innerHTML = `
+                <span class"font-weight-bolder">Propietario: </span> ${propietario}
+            `;
+
+            const telefonoParrafo = document.createElement('p');
+            telefonoParrafo.innerHTML = `
+                <span class"font-weight-bolder">Teléfono: </span> ${telefono}
+            `;
+
+            const fechaParrafo = document.createElement('p');
+            fechaParrafo.innerHTML = `
+                <span class"font-weight-bolder">Fecha: </span> ${fecha}
+            `;
+
+            const horaParrafo = document.createElement('p');
+            horaParrafo.innerHTML = `
+                <span class"font-weight-bolder">Hora: </span> ${hora}
+            `;
+
+            const sintomasParrafo = document.createElement('p');
+            sintomasParrafo.innerHTML = `
+                <span class"font-weight-bolder">Síntomas: </span> ${sintomas}
+            `;
+
+            divCita.appendChild(mascotaParrafo);
+            divCita.appendChild(propietarioParrafo);
+            divCita.appendChild(telefonoParrafo);
+            divCita.appendChild(fechaParrafo);
+            divCita.appendChild(horaParrafo);
+            divCita.appendChild(sintomasParrafo);
+
+            contenedorCitas.appendChild(divCita);
+        })
+    }
+
+    limpiarHTML(){
+        while(contenedorCitas.hasChildNodes()){
+            contenedorCitas.firstChild.remove();
+        }
     }
 }
 
@@ -54,7 +109,7 @@ function eventListeners() {
 }
 
 const citaObj = {
-    mascota: '', 
+    mascota: '',
     propietario: '',
     telefono: '',
     fecha: '',
@@ -63,30 +118,32 @@ const citaObj = {
 }
 
 function datosCita(e) {
-    const {name, value} = e.target;
+    const { name, value } = e.target;
     citaObj[name] = value;
 }
 
-function validarFormulario(e){
+function validarFormulario(e) {
     e.preventDefault();
-    
-    const {mascota, propietario, telefono, fecha, hora, sintomas} = citaObj;
 
-    if(!mascota || !propietario || !telefono || !fecha || !hora || !sintomas){
-        
+    const { mascota, propietario, telefono, fecha, hora, sintomas } = citaObj;
+
+    if (!mascota || !propietario || !telefono || !fecha || !hora || !sintomas) {
+
         ui.imprimirAlerta('Todos los campos son obligatorios', 'error');
         return;
     }
-    
+
     citaObj.id = Date.now();
-    administradorCitas.agregarCita({...citaObj});
-    
+    administradorCitas.agregarCita({ ...citaObj });
+
     reiniciarObjetoCita();
     formulario.reset();
+
+    ui.imprimirCitas(administradorCitas);
 }
 
 function reiniciarObjetoCita() {
-    for(prop in citaObj){
+    for (prop in citaObj) {
         citaObj[prop] = '';
     }
 }
