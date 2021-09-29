@@ -16,6 +16,9 @@ class Citas {
         this.citas = [...this.citas, cita];
         console.log(this.citas);
     }
+    eliminarCita(id){
+        this.citas = this.citas.filter(cita => cita.id !== id);
+    }
 }
 
 class UI {
@@ -74,6 +77,13 @@ class UI {
             sintomasParrafo.innerHTML = `
                 <span class"font-weight-bolder">Síntomas: </span> ${sintomas}
             `;
+            
+            const btnEliminar = document.createElement('button');
+            btnEliminar.classList.add('btn', 'btn-danger', 'mr-2');
+            btnEliminar.innerHTML = 'Eliminar &times';
+
+            btnEliminar.onclick = () => eliminarCita(id);
+
 
             divCita.appendChild(mascotaParrafo);
             divCita.appendChild(propietarioParrafo);
@@ -82,6 +92,7 @@ class UI {
             divCita.appendChild(horaParrafo);
             divCita.appendChild(sintomasParrafo);
 
+            divCita.appendChild(btnEliminar);
             contenedorCitas.appendChild(divCita);
         })
     }
@@ -146,4 +157,10 @@ function reiniciarObjetoCita() {
     for (prop in citaObj) {
         citaObj[prop] = '';
     }
+}
+
+function eliminarCita(id) {
+    administradorCitas.eliminarCita(id);
+    ui.imprimirAlerta('La cita se elimino correctamente');
+    ui.imprimirCitas(administradorCitas);
 }
