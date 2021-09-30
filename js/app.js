@@ -16,10 +16,12 @@ class Citas {
     }
     agregarCita(cita) {
         this.citas = [...this.citas, cita];
-        console.log(this.citas);
     }
     eliminarCita(id) {
         this.citas = this.citas.filter(cita => cita.id !== id);
+    }
+    editarCita(citaActualizada) {
+        this.citas = this.citas.map( cita => citaActualizada.id === cita.id ? citaActualizada : cita);
     }
 }
 
@@ -116,12 +118,12 @@ const administradorCitas = new Citas();
 
 eventListeners();
 function eventListeners() {
-    mascotaInput.addEventListener('input', datosCita);
-    propietarioInput.addEventListener('input', datosCita);
-    telefonoInput.addEventListener('input', datosCita);
-    fechaInput.addEventListener('input', datosCita);
-    horaInput.addEventListener('input', datosCita);
-    sintomasInput.addEventListener('input', datosCita);
+    mascotaInput.addEventListener('blur', datosCita);
+    propietarioInput.addEventListener('blur', datosCita);
+    telefonoInput.addEventListener('blur', datosCita);
+    fechaInput.addEventListener('blur', datosCita);
+    horaInput.addEventListener('blur', datosCita);
+    sintomasInput.addEventListener('blur', datosCita);
 
     formulario.addEventListener('submit', validarFormulario);
 }
@@ -152,8 +154,9 @@ function validarFormulario(e) {
     }
     if (editando) {
         ui.imprimirAlerta('Se edito correctamente');
-        formulario.querySelector('button[type="submit"]').textContent = 'Crear Cita';
+        administradorCitas.editarCita({...citaObj});
         editando = false;
+        formulario.querySelector('button[type="submit"]').textContent = 'Crear Cita';
     } else {
         citaObj.id = Date.now();
         administradorCitas.agregarCita({ ...citaObj });
